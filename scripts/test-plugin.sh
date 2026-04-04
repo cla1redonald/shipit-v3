@@ -207,37 +207,27 @@ fi
 
 dup_errors=()
 
-# Collect agent name fields
-declare -A agent_names
+# Collect all names, then check for duplicates using sort
+all_names=""
 for f in "$PLUGIN_ROOT/agents"/*.md; do
   [[ -f "$f" ]] || continue
   val=$(frontmatter_field "$f" "name")
   [[ -z "$val" ]] && continue
-  if [[ -n "${agent_names[$val]+x}" ]]; then
-    dup_errors+=("duplicate agent name '$val' in $(basename "$f") and ${agent_names[$val]}")
-  else
-    agent_names[$val]=$(basename "$f")
-  fi
+  all_names="$all_names$val"$'\n'
 done
-
-# Collect command description/name (use filename as the name identifier)
-declare -A cmd_names
 for f in "$PLUGIN_ROOT/commands"/*.md; do
   [[ -f "$f" ]] || continue
-  # Use the frontmatter 'name' if present, fall back to filename stem
   val=$(frontmatter_field "$f" "name")
   [[ -z "$val" ]] && val=$(basename "$f" .md)
-  if [[ -n "${cmd_names[$val]+x}" ]]; then
-    dup_errors+=("duplicate command name '$val' in $(basename "$f") and ${cmd_names[$val]}")
-  else
-    cmd_names[$val]=$(basename "$f")
-  fi
+  all_names="$all_names$val"$'\n'
 done
 
-if [[ ${#dup_errors[@]} -eq 0 ]]; then
+# Find duplicates
+dupes=$(echo "$all_names" | sort | uniq -d)
+if [[ -z "$dupes" ]]; then
   pass "No duplicate names"
 else
-  fail "No duplicate names" "$(IFS='; '; echo "${dup_errors[*]}")"
+  fail "No duplicate names" "duplicates found: $dupes"
 fi
 
 # --------------------------------------------------------------------------
@@ -335,24 +325,20 @@ fi
 # --------------------------------------------------------------------------
 
 xref_errors=()
-# Collect known command names (filename stems)
-declare -A known_commands
+# Collect known command names (filename stems) as newline-separated list
+known_cmds=""
 for f in "$PLUGIN_ROOT/commands"/*.md; do
   [[ -f "$f" ]] || continue
-  known_commands[$(basename "$f" .md)]=1
+  known_cmds="$known_cmds$(basename "$f" .md)"$'\n'
 done
 
 # Scan skill bodies for /command-name patterns that look like skill references
 for f in "$PLUGIN_ROOT/commands"/*.md; do
   [[ -f "$f" ]] || continue
   fname=$(basename "$f" .md)
-  # Look for /word patterns that likely refer to other skills (not URLs or headings)
   while IFS= read -r ref; do
-    # Skip self-references, common markdown patterns, and slash headings
     [[ "$ref" == "$fname" ]] && continue
-    [[ "$ref" == "orchestrate" ]] && continue  # always check if orchestrator exists
-    # Only flag if it looks like a sibling skill reference (no dots, no slashes in name)
-    if [[ -z "${known_commands[$ref]+x}" ]]; then
+    if ! echo "$known_cmds" | grep -qx "$ref"; then
       xref_errors+=("$(basename "$f"): references /$ref which is not a known command")
     fi
   done < <(grep -oE '`/[a-z][a-z-]+`' "$f" 2>/dev/null | sed 's/`\/\([a-z-]*\)`/\1/' | sort -u || true)
