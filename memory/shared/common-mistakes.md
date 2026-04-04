@@ -101,6 +101,12 @@ When numeric metadata (test counts, version numbers) are hardcoded in multiple f
 ### @retro Skipped at End
 The orchestrator's summary feels like a "done" state — it forgets to invoke @retro after. Fix: @retro runs BEFORE the summary.
 
+### @retro Missing From /build-feature
+**What happens:** /build-feature completes successfully (tests green, build passes, QA approves, code pushed) but no retrospective runs. Build learnings — CSS import issues, deployment auth surprises, scorer calibration gaps — are lost.
+**Root cause:** /build-feature Phase 5 (Finalize) originally went straight to commit+push+report without a retro step. The "finalize" step felt like completion, so the skill never prompted for learning capture. Unlike /shipit which has retro as a mandatory step, /build-feature treated building and shipping as separate concerns.
+**Prevention:** /build-feature now includes @retro as mandatory Phase 5 (before Finalize). Anti-rationalization table includes "I don't need a retro for a build" → "Every build generates learnings. Capture them."
+**Source:** Baby Name Scorer, 2026-04-04. Build completed, deployed to production, retro only ran after user noticed it was missing.
+
 ### Skipped Agents Without Justification
 There's a difference between "not needed" and "forgot." All agents must be explicitly listed as Invoke or Skip (with reason).
 
