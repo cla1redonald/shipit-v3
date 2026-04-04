@@ -18,6 +18,26 @@
             "command": "jq -r '.tool_input.command' | grep -qE '<<\\s*EOF|cat\\s+>' && { echo 'BLOCKED: Do not use Bash heredocs or redirects to create files. Use the Write tool instead.' >&2; exit 2; } || exit 0"
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/block-sensitive-paths.js"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/detect-secrets.js"
+          }
+        ]
       }
     ]
   }
