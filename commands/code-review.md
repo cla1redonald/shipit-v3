@@ -1,101 +1,80 @@
 ---
+name: code-review
 description: Structured code review for quality and security. Use before merging code or when you want a security/quality audit.
 ---
 
-# Code Review
+# /code-review -- Structured Code Review
 
-Structured code review for quality and security.
+**Usage:** `/code-review`
+**Example:** `/code-review` (reviews the current branch's changes against main)
 
 ## When to Use
-Use `/code-review` before merging code or when you want a security/quality audit.
 
-## What This Skill Does
+- Before merging a feature branch
+- When you want a security/quality audit of recent changes
+- After a significant implementation to catch issues early
+- NOT for: full ship workflow with commit/PR/merge (use `/shipit`)
 
-Reviews code against ShipIt standards for:
-- Security vulnerabilities
-- Code quality
-- Performance issues
-- Test coverage
-- Maintainability
+**Cost:** Single sonnet agent. Lightweight.
 
-## Review Checklist
+## Process
 
-### Security (Must Pass)
+1. **Get the diff.** Run `git diff main` (or appropriate base branch) to see all changes.
+2. **Invoke @reviewer.** Spawn via Task tool with the diff and the review checklist below.
+3. **Present findings.** Categorize by severity (Must Fix / Should Fix / Nice to Have).
+4. **Deliver verdict.** Ready to ship / Fix and re-review / Major rework.
+
+### Review Checklist
+
+**Security (Must Pass):**
 - [ ] Input validation on all user input
-- [ ] No SQL injection risks (parameterised queries)
-- [ ] No XSS vulnerabilities
+- [ ] No injection risks (SQL, XSS, command)
 - [ ] Secrets not exposed in code
 - [ ] Auth checks on protected routes
-- [ ] RLS policies on Supabase tables
+- [ ] Database access control configured
 
-### Code Quality
+**Code Quality:**
 - [ ] Functions are small and focused
 - [ ] Names are clear and descriptive
-- [ ] No obvious code smells
-- [ ] TypeScript types used properly (no unjustified `any`)
-- [ ] Error handling is present
-- [ ] Type propagation: all construction sites updated for new required fields
+- [ ] No `any` types without justification
+- [ ] Error handling present
+- [ ] Type propagation complete for new fields
 
-### Performance
+**Performance:**
 - [ ] No N+1 query patterns
 - [ ] No unnecessary re-renders
-- [ ] Images optimized
 - [ ] Bundle size considered
 
-### Testing
+**Testing:**
 - [ ] Tests exist for new functionality
-- [ ] Happy path covered
-- [ ] Key error cases covered
-- [ ] Tests are meaningful (not just for coverage)
-- [ ] Build command matches what CI/Vercel runs
+- [ ] Happy path + error cases covered
+- [ ] Build command matches what CI runs
 
-### Maintainability
-- [ ] Code is understandable without author explanation
-- [ ] No magic numbers/strings
-- [ ] Consistent patterns with rest of codebase
-- [ ] No dead code
-- [ ] No merge conflict markers
+**Maintainability:**
+- [ ] Code understandable without author explanation
+- [ ] Consistent with existing codebase patterns
+- [ ] No dead code or merge conflict markers
 
-## Severity Levels
+## Anti-Rationalization
 
-**Must Fix** - Blocks shipping
-- Security vulnerabilities
-- Broken functionality
-- Data loss risk
+| Thought | Reality |
+|---------|---------|
+| "The code looks fine, I don't need to run it" | Reading is not reviewing. Run the tests. Check the build. |
+| "It's just a style issue" | Consistency matters. Flag as Nice to Have, but flag it. |
+| "Tests pass, so it must be correct" | Tests verify what they test. Check for missing test cases. |
+| "This is too small to review" | Small changes cause big breaks. Review everything. |
 
-**Should Fix** - Should address before shipping
-- Code quality issues
-- Missing error handling
-- Performance concerns
+## Exit Criteria
 
-**Nice to Have** - Can ship without
-- Style improvements
-- Minor optimizations
-- Documentation gaps
+- [ ] Every changed file reviewed
+- [ ] All findings categorized by severity
+- [ ] Security checklist completed
+- [ ] Clear verdict delivered
 
-## Output Format
+## Failure Recovery
 
-```markdown
-## Code Review: [File/Feature]
-
-### Summary
-[One-line assessment]
-
-### Must Fix
-1. [Issue] - [File:Line] - [Suggestion]
-
-### Should Fix
-1. [Issue] - [File:Line] - [Suggestion]
-
-### Nice to Have
-1. [Suggestion]
-
-### Security Audit
-- Input validation: Pass/Fail
-- Auth/authz: Pass/Fail
-- Data exposure: Pass/Fail
-- Secrets handling: Pass/Fail
-
-### Verdict
-[Ready to ship / Fix and re-review / Major rework]
-```
+| Problem | Action |
+|---------|--------|
+| @reviewer fails to invoke | Retry once, then do the review inline |
+| No diff (no changes) | Nothing to review — report clean |
+| Verdict is "Major rework" | Stop and present findings to user for guidance |

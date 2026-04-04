@@ -1,76 +1,80 @@
 ---
+name: prd-review
 description: Review and improve a Product Requirements Document before starting development. Use when validating a PRD for completeness, clarity, and feasibility.
 ---
 
-# PRD Review
+# /prd-review -- PRD Validation
 
-Review and improve a Product Requirements Document.
+**Usage:** `/prd-review`
+**Example:** `/prd-review` (reviews the PRD in the current project)
 
 ## When to Use
-Use `/prd-review` when you have a PRD that needs validation before starting development.
 
-## What This Skill Does
+- You have a PRD that needs validation before building
+- You want to catch gaps, ambiguity, and scope issues before they become code problems
+- After @strategist produces a PRD and before the build starts
+- NOT for: creating a PRD from scratch (use `@strategist`), breaking a PRD into threads (use `/prd-threads`)
 
-1. **Checks completeness** - Are all required sections present?
-2. **Validates clarity** - Is the problem clearly defined?
-3. **Assesses scope** - Is this achievable for MVP?
-4. **Identifies gaps** - What's missing or ambiguous?
+**Cost:** No agent spawns. Runs inline.
 
-## Review Checklist
+## Process
 
-### Problem Definition
-- [ ] Problem is clearly stated
-- [ ] Target user is identified
-- [ ] Pain point is specific and relatable
-- [ ] Current workaround is documented
+1. **Find the PRD.** Look for `docs/prd.md`, `PRD.md`, or a file matching the project name.
+2. **Review against checklist** (see below).
+3. **Produce review report** with strengths, issues, questions, and verdict.
+4. **Present to user** for action.
 
-### Solution
+### Review Checklist
+
+**Problem Definition:**
+- [ ] Problem clearly stated
+- [ ] Target user identified
+- [ ] Pain point specific and relatable
+- [ ] Current workaround documented
+
+**Solution:**
 - [ ] Solution addresses the core problem
-- [ ] MVP scope is ruthlessly minimal
-- [ ] Success criteria are measurable
-- [ ] Out of scope is explicitly stated
+- [ ] MVP scope ruthlessly minimal
+- [ ] Success criteria measurable
+- [ ] Out of scope explicitly stated
 
-### Technical Feasibility
-- [ ] Fits within standard stack (Next.js, Supabase, Vercel)
+**Technical Feasibility:**
+- [ ] Fits within chosen stack (or stack is specified)
 - [ ] No obvious technical blockers
-- [ ] Data model is reasonable
+- [ ] Data model reasonable
 - [ ] Security considerations noted
 
-### UX/UI
-- [ ] Main user flows are described (APP_FLOW.md referenced)
-- [ ] Key screens are identified
-- [ ] Mobile responsiveness mentioned
-- [ ] Quality bar is clear
+**UX/UI:**
+- [ ] Main user flows described
+- [ ] Key screens identified
+- [ ] Mobile responsiveness addressed
 
-### Thread Plan
-- [ ] Sequential Thread Plan section exists
-- [ ] Threads are self-contained (all context included)
-- [ ] Reasoning levels assigned to each thread
-- [ ] File:line references provided where applicable
-- [ ] Validation targets defined for each thread
+**Threads (if present):**
+- [ ] Threads are self-contained
+- [ ] Reasoning levels assigned
+- [ ] File references specific
+- [ ] Validation targets defined
 
-## Output Format
+## Anti-Rationalization
 
-```markdown
-## PRD Review: [Project Name]
+| Thought | Reality |
+|---------|---------|
+| "The PRD is good enough to start building" | Ambiguous requirements cause rework. 10 minutes of review saves days. |
+| "We can clarify during implementation" | Clarifying during implementation means context-switching and rework. Clarify now. |
+| "The scope is obvious" | If the scope is obvious, writing "Out of Scope" takes 30 seconds. Do it. |
+| "Success criteria can come later" | Without success criteria, you can't know when you're done. Define them now. |
 
-### Overall Assessment
-[One sentence summary]
+## Exit Criteria
 
-### Strengths
-- [What's good about this PRD]
+- [ ] All checklist items evaluated
+- [ ] Issues documented with specific suggestions
+- [ ] Questions listed for user clarification
+- [ ] Clear verdict: Ready to build / Needs revision / Major gaps
 
-### Issues to Address
-1. **[Issue]**: [Description and suggestion]
+## Failure Recovery
 
-### Questions to Clarify
-- [Question that needs answering before build]
-
-### Verdict
-[Ready to build / Needs revision / Major gaps]
-```
-
-## Reference Files
-- `docs/prd-template.md` - Expected PRD format (includes thread structure)
-- `docs/prd-questions.md` - Questions that should have been answered
-- `docs/reasoning-levels.md` - Task complexity assessment guide
+| Problem | Action |
+|---------|--------|
+| No PRD found | Ask user for PRD location or suggest running @strategist |
+| PRD too vague to review | Flag as "Major gaps" — needs @strategist rewrite |
+| Technical feasibility unclear | Flag specific concerns, recommend @architect assessment |

@@ -1,70 +1,64 @@
 ---
-description: Launch a full ShipIt orchestrated build. The orchestrator runs as the main session so it can delegate to all specialist agents via Task tool and Agent Teams.
+name: orchestrate
+description: Launch a full orchestrated build. The orchestrator runs as the main session so it can delegate to all specialist agents via Task tool and Agent Teams.
 argument-hint: Your idea or PRD
 ---
 
-# /orchestrate
+# /orchestrate -- Full Orchestrated Build
 
-Launch a full orchestrated build — from idea to shipped product.
+**Usage:** `/orchestrate <idea or PRD>`
+**Example:** `/orchestrate build me a mood journal app`
 
-## Why This Is a Skill
+## When to Use
 
-The orchestrator **must run as the main conversation** (the team lead), not as a subprocess. This is because:
+- You're building a new product from scratch (idea to shipped software)
+- You have a PRD and want the full agent pipeline (research -> strategy -> design -> build -> review -> ship)
+- You need multi-agent coordination across research, architecture, engineering, QA, docs
+- NOT for: one-file bug fixes (use `@engineer`), quick features (use `/build-feature`), just shipping (use `/shipit`)
 
-- It delegates to other agents via the **Task tool** and **Agent Teams**
-- The Task tool only supports single-level nesting — subprocesses cannot spawn further subprocesses
-
-If the orchestrator ran as a subprocess, it would lose access to delegation tools and do all the work itself. The `/orchestrate` skill solves this by loading the orchestrator into the current session.
-
-## Pre-Flight Check (MANDATORY)
-
-Before doing anything else, verify these conditions. If any check fails, warn the user and stop.
-
-**1. Model check:** The orchestrator requires **Opus** to reliably delegate and coordinate parallel agents. If you are not running as an Opus-class model (i.e., your model identifier contains "opus"), tell the user:
-
-> WARNING: The orchestrator is running as [current model], not Opus. Orchestration requires Opus for reliable multi-agent delegation. Switch to Opus with `/model opus` before running `/orchestrate`.
-
-Do NOT proceed with orchestration on a non-Opus model. The orchestrator's delegation protocol, Agent Teams coordination, and plan approval workflows require Opus-level instruction following. On other models, the orchestrator tends to do the work itself instead of delegating.
-
-**2. Agent Teams check:** Verify `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is set to `1` in the project's `.claude/settings.json` or the user's global `~/.claude/settings.json`. If missing, tell the user to add it.
+**Cost:** Spawns 6-10 agents including Opus. For a one-file change, use `@engineer` directly.
 
 ## Process
 
-You MUST complete each step in order. Do not skip ahead.
+1. **Pre-flight checks:**
+   - Verify you're running on Opus (orchestration requires it for reliable delegation)
+   - Verify `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is set in settings.json
+   - If either fails, warn the user and stop
 
-**Step 1: Load orchestrator definition.**
-Use the Read tool to read `agents/orchestrator.md`. This contains your agent catalog, delegation instructions, workflows, and anti-patterns. Do not proceed until you have read this file.
+2. **Load orchestrator definition.** Read `agents/orchestrator.md` for the full agent catalog and delegation instructions.
 
-**Step 2: Load orchestrator memory.**
-Use the Read tool to read `memory/agent/orchestrator.md`. This contains learned coordination patterns and known failure modes. Do not proceed until you have read this file.
+3. **Confirm readiness.** "Orchestrator loaded. 13 specialist agents available. Ready to build."
 
-**Step 3: Load shared memory.**
-Use the Read tool to read these files (can be read in parallel):
-- `memory/shared/core-principles.md` (always)
-- `memory/shared/tech-stack-defaults.md` (always)
-- `memory/shared/common-mistakes.md` and `memory/shared/expert-frameworks.md` (on-demand when relevant)
+4. **Begin orchestration.** Follow the orchestrator definition. Delegate to specialists. Typical flow:
+   - @researcher -> @strategist (PRD, requires user approval) -> @architect + @designer (parallel) -> @devsecops (setup) -> @engineer + @qa (parallel build) -> @reviewer + @docs (parallel polish) -> @retro -> ship
 
-**Step 4: Confirm readiness.**
-After reading all files, briefly confirm to the user: "Orchestrator loaded. 11 specialist agents available. Ready to build."
+5. **Always invoke @retro** before presenting final summary.
 
-**Step 5: Begin orchestration.**
-Follow the orchestrator agent definition. Delegate to specialist agents using the Task tool and Agent Teams. Use Claude Code's native coordination tools (Task, TeamCreate, SendMessage, TeamDelete).
+## Anti-Rationalization
 
-Begin with whatever the user has provided (idea, PRD, or specific request).
+| Thought | Reality |
+|---------|---------|
+| "I can just do this myself without delegating" | You are the orchestrator. Coordination, not implementation. Delegate. |
+| "This is too small for a full orchestrated build" | Then don't use /orchestrate. Use @engineer directly. |
+| "I'll skip @retro, the project went fine" | @retro is mandatory. Most common failure mode. Every project has learnings. |
+| "I don't need @researcher, I already know the space" | @researcher takes 2 minutes and might save days of reinvention. |
+| "I'll skip @docs, we can add docs later" | Later never comes. Documentation drift compounds. |
 
-## Core Rules
+## Exit Criteria
 
-- **NEVER write code, create PRDs, design systems, or run retros yourself** — always delegate to the appropriate specialist agent
-- If your tool call history shows Write/Edit on source code, schemas, or PRDs — you have violated delegation
-- Always invoke @retro before presenting your final summary
-- Always invoke @docs after any architectural or API changes
-- **When spawning agents via Task tool, always pass the `model` parameter** matching the agent's designated model from the agent table (e.g., `model: "opus"` for @architect, `model: "sonnet"` for @engineer, `model: "haiku"` for @researcher)
-- Parallel agents are limited by task dependencies and file ownership, not an arbitrary cap. If you hit API rate limits, reduce parallelism incrementally.
+- [ ] All delegated agents completed their tasks
+- [ ] PRD approved by user before build started
+- [ ] @retro completed and learnings captured
+- [ ] @docs completed and documentation updated
+- [ ] Code committed and pushed to feature branch
+- [ ] Build report presented to user
 
-## Quick Reference
+## Failure Recovery
 
-```
-/orchestrate build me a mood journal app
-/orchestrate here's my PRD: [paste or file path]
-/orchestrate resume   (pick up from the task list)
-```
+| Problem | Action |
+|---------|--------|
+| Not running on Opus | Tell user to switch: `/model opus` |
+| Agent Teams not enabled | Tell user to add env var to settings.json |
+| Agent fails to complete | Retry once, then report to user with details |
+| PRD not approved | Do not proceed to build. Wait for user sign-off. |
+| @retro skipped | Go back and run it. Never skip. |
