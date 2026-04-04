@@ -53,7 +53,10 @@ Spawn @engineer (model: sonnet) to implement iteratively. Triple gate after each
 ### Phase 4: @qa (QA Reviewer)
 Spawn @qa (model: sonnet) for final quality review: unused imports, missing exports, UI styling, env vars documented. Run production build. Verdict: SHIP IT or NEEDS FIXES.
 
-### Phase 5: Finalize
+### Phase 5: @retro (NEVER SKIP)
+Spawn @retro (model: opus) to capture learnings from the build. Pass: what was built, decisions made, any issues hit during implementation, iteration count, what was hardest. @retro evaluates for Tier 1 vs Tier 2 graduation.
+
+### Phase 6: Finalize
 Commit all changes, push to feature branch, write build report to `docs/features/<slug>/build-report.md`.
 
 ## Core Rules
@@ -82,6 +85,7 @@ Commit all changes, push to feature branch, write build report to `docs/features
 - [ ] TypeScript compiles without errors
 - [ ] Production build succeeds
 - [ ] QA review completed
+- [ ] @retro completed and learnings captured
 - [ ] Build report written
 - [ ] Code committed and pushed to feature branch
 - [ ] Do NOT create PR or merge (user runs `/shipit` for that)
