@@ -13,7 +13,7 @@ description: Enforced commit workflow — test, typecheck, build, commit, retro,
 - You're done implementing and want to ship with full quality gates
 - You want enforced test -> typecheck -> build -> commit -> review -> merge flow
 - You need @retro and @docs to run (mandatory, never skipped)
-- NOT for: quick commit-and-push without gates (use git directly or `/ship`)
+- NOT for: quick commit-and-push without gates (just use git directly)
 
 **Cost:** @retro (opus) + @docs (sonnet) + @reviewer (sonnet) = 3 agent spawns. No cost if you just need to push — use git directly.
 
