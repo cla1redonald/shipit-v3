@@ -1,288 +1,138 @@
-# ShipIt v2
+# ShipIt v3
 
-A team of 12 specialist AI agents for Claude Code that takes products from idea to shipped software.
-
-## What It Does
-
-ShipIt gives you a full product development team inside Claude Code:
-
-- **@researcher** finds existing solutions before you build
-- **@strategist** shapes ideas into clear PRDs
-- **@pm** makes scope decisions and guards requirements
-- **@architect** designs the system
-- **@designer** specs the user experience
-- **@engineer** writes the code
-- **@devsecops** handles infrastructure, deployment, and security
-- **@reviewer** catches what others miss
-- **@qa** writes tests alongside features
-- **@docs** ensures knowledge survives
-- **@retro** runs retrospectives and graduates learnings into the system
-- **@orchestrator** coordinates the whole team
-
-Agents work in parallel using Claude Code's native Agent Teams, communicate directly via messaging, and improve over time through persistent memory.
-
-## Prerequisites
-
-- **Claude Code** (latest version)
-- **Node.js** (for hooks)
-- **jq** (`brew install jq` on macOS)
-
-## Installation
-
-```bash
-git clone https://github.com/cla1redonald/shipit-v2.git ~/shipit-v2
-cd ~/shipit-v2
-./setup.sh
-```
-
-The setup script will:
-- Verify prerequisites (claude, node, jq)
-- Register ShipIt as a Claude Code plugin
-- Enable Agent Teams
-- Print a quick-start guide
-
-To uninstall:
-
-```bash
-cd ~/shipit-v2
-./setup.sh --uninstall
-```
-
-### Verify Installation
-
-Start a **new** Claude Code session and try:
-
-```
-Use @researcher to find existing solutions for task management apps
-```
-
-You should see ShipIt's agents listed when Claude loads.
-
-<details>
-<summary>Manual installation (if you prefer not to use the script)</summary>
-
-Add these keys to `~/.claude/settings.json` (merge — don't replace the whole file):
-
-```json
-{
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  },
-  "extraKnownMarketplaces": {
-    "shipit": {
-      "source": {
-        "source": "directory",
-        "path": "/absolute/path/to/shipit-v2"
-      }
-    }
-  },
-  "enabledPlugins": {
-    "shipit@shipit": true
-  }
-}
-```
-
-Use the absolute path to your cloned `shipit-v2` directory.
-
-**Single session (no persistent install):**
-
-```bash
-claude --plugin-dir ~/shipit-v2
-```
-
-</details>
+13 specialist AI agents and 9 composable skills for Claude Code. Build products from idea to shipped software, or call any agent standalone in any project.
 
 ## Quick Start
 
-```
-# Full orchestrated build — PRD to shipped product
-/orchestrate build [your idea]
-
-# Individual agents for specific tasks
-Use @researcher to find existing solutions for [problem]
-Use @strategist to create a PRD for [idea]
-Use @architect to design the system for [PRD]
-Use @engineer to implement [feature]
-Use @reviewer to review the code
+**Install:**
+```bash
+# ShipIt is already installed as a local plugin
+# Verify it's working:
+~/shipit-v2/scripts/verify-plugin.sh
 ```
 
-> **Important:** Use `/orchestrate` (not `@orchestrator`) to start a full build. The orchestrator must run as the main session to delegate to other agents. See [Troubleshooting](#orchestrator-not-delegating) if agents aren't being invoked.
-
-### Skills
-
+**Call a single agent:**
 ```
-/orchestrate    — Launch a full orchestrated build (main session)
-/shipit         — Enforced commit workflow (test → typecheck → build → commit → retro → docs → push → PR → review → retro → merge)
-/prd-review     — Review and improve a PRD
-/code-review    — Structured code review
-/prd-threads    — Convert a PRD into executable implementation threads
+@architect "Design the data model for a task manager"
+@engineer "Add dark mode toggle to settings"
+@reviewer "Review the auth implementation"
 ```
 
-> **Note:** If installed as a plugin, commands use the `shipit:` prefix (e.g., `/shipit:prd-review`).
+**Run the lifecycle pipeline:**
+```
+/spec "Add dark mode toggle"        # Capture requirements
+/gameplan "Add dark mode toggle"    # Plan the implementation
+/build-feature "Add dark mode"      # TDD build pipeline
+/code-review                        # Quality + security review
+/shipit                             # Test, commit, review, merge
+```
 
-## Architecture
+**Full orchestrated build:**
+```
+/orchestrate "build me a mood journal app"
+```
 
-### How It Works
+## Agents
 
-ShipIt provides **expert agents** and **quality enforcement**. Claude Code handles coordination natively.
+All agents work standalone in any project. In team mode (via `/orchestrate`), they coordinate automatically.
 
-**Expert Agents** — 12 specialist agent definitions with deep domain knowledge (security checklists, test strategies, review patterns, architecture principles). Each agent is 150-400 lines of expertise loaded on demand.
+| Agent | Model | Use For |
+|-------|-------|---------|
+| @orchestrator | opus | Coordinate full builds |
+| @researcher | haiku | Find existing solutions before building |
+| @strategist | opus | Turn raw ideas into PRDs |
+| @pm | sonnet | Scope decisions, prioritization |
+| @architect | opus | System design, data models, API structure |
+| @designer | sonnet | UI/UX specifications, design systems |
+| @engineer | sonnet | Code implementation |
+| @data-engineer | sonnet | Pipelines, ETL, embeddings |
+| @devsecops | sonnet | Infrastructure, deployment, security |
+| @reviewer | sonnet | Code review, security audit |
+| @qa | sonnet | Test strategy, test writing |
+| @docs | sonnet | Documentation |
+| @retro | opus | Learning graduation (two-tier system) |
 
-**Quality Hooks** — Automatic enforcement that blocks pushes without tests, deploys without security review, and validates on agent stop.
+## Skills
 
-**Hybrid Memory** — Agents learn session-to-session. @retro graduates proven patterns to git-committed knowledge files.
+| Skill | Cost | Use For |
+|-------|------|---------|
+| `/spec` | None | Capture requirements |
+| `/gameplan` | None | Plan implementation |
+| `/build-feature` | 3-4 agents | TDD build pipeline |
+| `/tdd-build` | 1-2 agents | Lighter TDD workflow |
+| `/code-review` | 1 agent | Quality + security review |
+| `/prd-review` | None | Validate a PRD |
+| `/prd-threads` | None | Break PRD into threads |
+| `/orchestrate` | 6-10 agents | Full product build |
+| `/shipit` | 3 agents | Enforced commit workflow |
 
-**Native Coordination** — Claude Code's Agent Teams and Task tool handle team creation, parallelization, and messaging. ShipIt doesn't duplicate this — it provides the specialists and the standards.
+## Lifecycle Pipeline
 
-### Hybrid Learning System
+```
+/spec -> /gameplan -> /build-feature -> /code-review -> /shipit
+```
 
-**Tier 1 (Persistent Memory):** Each agent learns session-to-session via native Claude Code memory. Fast, automatic, no commits needed.
+Each skill works standalone. They chain via the file system — upstream outputs are read if they exist. Use the full pipeline or any individual skill.
 
-**Tier 2 (Committed Knowledge):** @retro graduates proven patterns to git-committed files in `memory/`. Durable, version-controlled, shareable.
+## Standalone vs Team Mode
 
-### Quality Gates
+Agents detect their operating mode automatically:
 
-Six gates enforced automatically via hooks:
+- **Standalone:** Called directly. Work independently, produce outputs, report back.
+- **Team mode:** Detected when `MODE: team` is in the prompt OR TaskList/SendMessage tools are available. Agents follow the shared team protocol for task claiming, communication, and file ownership.
 
-| Gate | Type | What It Checks |
-|------|------|----------------|
-| 1. PRD Approval | HARD | User must approve scope |
-| 2. Architecture Review | Soft | Design soundness |
-| 3. Infrastructure Ready | Soft | Deployment working |
-| 4. Code Review | Soft | Tests pass, build succeeds before push |
-| 5. Security Scan | HARD | No secrets, no vulnerabilities before deploy |
-| 6. Ship Ready | HARD | All gates passed on completion |
+## Resilience
 
-### Model Strategy
+ShipIt survives Claude Code updates with three layers:
 
-- **Opus** for thinkers: orchestrator, strategist, pm, architect, reviewer, retro
-- **Sonnet** for executors: engineer, designer, devsecops, qa, docs
-- **Haiku** for speed: researcher
+1. **Dual registration.** Agents and skills sync to both the plugin path and global fallback paths (`~/.claude/agents/`, `~/.claude/skills/`).
+2. **Verification.** `scripts/verify-plugin.sh` checks plugin health after updates.
+3. **Automated tests.** `scripts/test-plugin.sh` validates frontmatter, references, hooks, and skill contracts (10 tests).
+
+```bash
+# After a Claude update:
+~/shipit-v2/scripts/verify-plugin.sh
+
+# If unhealthy:
+~/shipit-v2/scripts/sync-global.sh
+```
+
+## Cost Guide
+
+| Task | Full Path | Lean Path |
+|------|-----------|-----------|
+| New product | `/orchestrate` (8+ agents) | Only for building from scratch |
+| New feature | `/build-feature` (3-4 agents) | `--skip-architect` if design is clear |
+| Bug fix | `/build-feature` | `@engineer` directly |
+| Quick review | `/code-review` | `@reviewer` directly |
+| Ship it | `/shipit` (full gates) | Git commit + push manually |
+
+## Security
+
+- **Tool allowlists:** Each agent has minimum required tools (e.g., @reviewer is read-only)
+- **Sensitive file protection:** PreToolUse hook blocks writes to `~/.claude/settings.json`, `~/.ssh/`, `~/.aws/`, `.env` files
+- **Secret detection:** PostToolUse hook warns if written files contain API keys, tokens, or passwords
+
+## References
+
+On-demand reference files loaded by agents when relevant:
+
+| File | Content |
+|------|---------|
+| `references/team-protocol.md` | Team coordination protocol |
+| `references/stack-nextjs-supabase.md` | Next.js + Supabase patterns |
+| `references/stack-python-fastapi.md` | Python + FastAPI patterns |
+| `references/quality-gates.md` | Triple gate, test requirements |
+| `references/commit-conventions.md` | Conventional commits |
 
 ## Project Structure
 
 ```
-shipit-v2/
-├── .claude-plugin/
-│   └── plugin.json          # Plugin manifest (auto-discovers components)
-├── .claude/
-│   └── settings.json        # Project-level settings (Agent Teams, permissions)
-├── agents/                  # 12 agent definitions (YAML frontmatter)
-├── commands/                # 5 commands (orchestrate, shipit, prd-review, code-review, prd-threads)
-├── hooks/                   # Quality gate enforcement
-│   ├── hooks.json           # Hook configuration
-│   ├── pre-push-check.js    # Gate 4: blocks push without review
-│   ├── security-scan.js     # Gate 5: blocks deploy without security check
-│   └── post-completion.js   # Gate 6: validates on agent stop
-├── docs/                    # Reference materials
-│   ├── prd-template.md      # PRD format
-│   ├── prd-questions.md     # 17-step questioning flow
-│   ├── reasoning-levels.md  # Task complexity assessment
-│   ├── quality-gates.md     # Gate definitions
-│   ├── phase-checklists.md  # Phase checklists and deliverables
-│   ├── recommended-hooks.md # Recommended project hooks
-│   └── case-studies/        # Real builds documented end-to-end
-├── tests/                   # Framework validation suite (190 tests)
-├── memory/                  # Hybrid learning system
-│   ├── shared/              # Institutional knowledge (all agents read)
-│   └── agent/               # Per-agent knowledge (graduated by @retro)
-├── CLAUDE.md                # Project instructions
-├── SOUL.md                  # System identity and philosophy
-└── README.md                # This file
+~/shipit-v2/
+├── agents/          # 13 agent definitions
+├── commands/        # 9 skill definitions
+├── references/      # On-demand reference material
+├── hooks/           # Hook scripts (security, health check)
+├── scripts/         # Verify, sync, test scripts
+└── docs/            # Reference docs, changelog
 ```
-
-## Configuration
-
-### Project-Level Settings (`.claude/settings.json`)
-
-The repo includes a project-level settings file that enables Agent Teams and configures permissions. This file is used when you work **inside** the shipit-v2 repo itself (e.g., to develop or test agents).
-
-When ShipIt is installed as a **plugin** in another project, hooks are auto-discovered from `hooks/hooks.json`. You still need Agent Teams enabled in your user-level or project-level settings.
-
-### Hooks
-
-Quality gates are enforced by three hook scripts:
-
-- **`pre-push-check.js`** — Blocks `git push` if tests fail, build fails, or conflict markers exist
-- **`security-scan.js`** — Blocks `vercel --prod` if secrets are exposed
-- **`post-completion.js`** — Validates test coverage when agents stop
-
-All hooks are **fail-closed**: if a hook crashes, it blocks the action rather than silently allowing it.
-
-### Setting Up Hooks in Your Project
-
-Hooks are auto-discovered from `hooks/hooks.json` when the plugin is loaded. No manual hook configuration needed in your project's settings.
-
-## Troubleshooting
-
-### Agents not loading
-
-- Ensure the plugin is installed: `claude --plugin-dir ~/shipit-v2`
-- Start a fresh session after installing
-- Check that `.claude-plugin/plugin.json` exists and `agents/` directory contains agent definitions
-
-### Agent Teams not working
-
-- Ensure `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is set in your settings
-- Agent Teams is experimental — if unavailable, the orchestrator falls back to sequential subagents
-
-### Hooks blocking unexpectedly
-
-- Hooks only activate on specific commands (`git push` and `vercel --prod`)
-- Check the hook output for the specific error message
-- If a hook is crashing, check that Node.js is available
-
-### Orchestrator not delegating
-
-The orchestrator must run as the **main conversation** (team lead), not as a subprocess. If agents aren't being invoked:
-
-- Use `/orchestrate` (or `/shipit:orchestrate`) to start a full build
-- Do NOT use `@orchestrator` or spawn it via Task tool — it will lose delegation ability
-- The Task tool only supports single-level nesting: the orchestrator needs to be top-level to spawn subagents
-- If the orchestrator is writing code itself instead of delegating, it was likely spawned as a subprocess
-
-### Skills not found
-
-- Try with the `shipit:` prefix: `/shipit:prd-review`
-- Verify the plugin is loaded by checking the skill list
-
-## Token Usage
-
-ShipIt coordinates multiple agents, each consuming tokens. Usage scales with project complexity and the number of agents invoked.
-
-### Estimates by Project Size
-
-| Project | Agents Invoked | Estimated Tokens | Example |
-|---------|---------------|-----------------|---------|
-| **Simple** | 2-3 | ~150-200k | Counter app, landing page |
-| **Medium** | 5-7 | ~400-800k | CRUD app, dashboard |
-| **Full build** | 8-12 (with Agent Teams) | ~700k-1.3M+ | Multi-feature product, PRD to production |
-
-### Why Token Usage Is High
-
-- **Opus agents** (orchestrator, strategist, pm, architect, reviewer, retro) use ~5x the quota of Sonnet agents
-- **Agent Teams** create separate Claude Code instances — each teammate has its own context window
-- The orchestrator reads agent definitions, memory files, and all agent output, adding coordination overhead
-
-### Recommendations
-
-- **Max plan gives the best experience.** Full orchestrated builds with Agent Teams and multiple Opus agents work comfortably on Max. Pro plan users may hit usage limits on larger projects.
-- **Start with individual agents** (`@engineer`, `@reviewer`) to get value without the full orchestration overhead
-- **The orchestrator is lightweight** — it delegates to specialists and lets Claude coordinate natively
-- **Use `/orchestrate` for real projects**, individual agents for quick tasks
-
-## Built with ShipIt
-
-### Focus Timer (Pomodoro)
-
-A single-page Pomodoro timer built using the full orchestrated workflow. 361 tests, 93 kB bundle, zero deploy failures.
-
-- **Repo:** https://github.com/cla1redonald/focus-timer
-- **Live:** https://focus-timer-silk-seven.vercel.app
-- **Case study:** [docs/case-studies/focus-timer.md](docs/case-studies/focus-timer.md)
-
-The build used 11 agents across 7 phases, with parallel design (@architect + @designer) and parallel build threads (sound + keyboard shortcuts). The code review caught 3 must-fix bugs before shipping.
-
-## License
-
-MIT
