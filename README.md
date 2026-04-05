@@ -8,7 +8,7 @@
 ```bash
 # ShipIt is already installed as a local plugin
 # Verify it's working:
-~/shipit-v2/scripts/verify-plugin.sh
+~/shipit-v3/scripts/verify-plugin.sh
 ```
 
 **Call a single agent:**
@@ -91,10 +91,10 @@ ShipIt survives Claude Code updates with three layers:
 
 ```bash
 # After a Claude update:
-~/shipit-v2/scripts/verify-plugin.sh
+~/shipit-v3/scripts/verify-plugin.sh
 
 # If unhealthy:
-~/shipit-v2/scripts/sync-global.sh
+~/shipit-v3/scripts/sync-global.sh
 ```
 
 ## Cost Guide
@@ -128,7 +128,7 @@ On-demand reference files loaded by agents when relevant:
 ## Project Structure
 
 ```
-~/shipit-v2/
+~/shipit-v3/
 ├── agents/          # 13 agent definitions
 ├── commands/        # 9 skill definitions
 ├── references/      # On-demand reference material

@@ -5,9 +5,9 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const CACHE_FILE = path.join(os.homedir(), 'shipit-v2', '.shipit-health');
+const CACHE_FILE = path.join(os.homedir(), 'shipit-v3', '.shipit-health');
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
-const SHIPIT_DIR = path.join(os.homedir(), 'shipit-v2');
+const SHIPIT_DIR = path.join(os.homedir(), 'shipit-v3');
 
 // Check cache
 try {

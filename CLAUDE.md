@@ -124,7 +124,7 @@ Read `SOUL.md` for ShipIt's philosophy and identity. It defines the system's app
 
 ## Project Location
 
-**Projects are NEVER created inside the shipit-v2 directory.** ShipIt is a framework/plugin, not a workspace. Every project gets its own directory and git repo outside shipit-v2 (e.g., `~/my-project/`).
+**Projects are NEVER created inside the shipit-v3 directory.** ShipIt is a framework/plugin, not a workspace. Every project gets its own directory and git repo outside shipit-v3 (e.g., `~/my-project/`).
 
 ## Defaults
 
