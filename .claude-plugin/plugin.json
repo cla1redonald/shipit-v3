@@ -1,7 +1,7 @@
 {
   "name": "shipit",
-  "description": "13 specialist AI agents and 8 composable skills for building products. Agents work standalone in any project or coordinate as teams. Lifecycle: /spec -> /gameplan -> /build-feature -> /code-review -> /shipit.",
-  "version": "3.0.0",
+  "description": "13 specialist AI agents and 10 composable skills for building products. Agents work standalone in any project or coordinate as teams. Lifecycle: /spec -> /gameplan -> /build-feature -> /code-review -> /shipit. Parallel builds: /shipit-parallel.",
+  "version": "3.1.0",
   "author": { "name": "Claire Donald" },
   "license": "MIT",
   "keywords": ["agents", "build", "product", "orchestration", "tdd", "fullstack", "standalone", "lifecycle"],

@@ -1,5 +1,17 @@
 # Changelog
 
+## v3.1.0 (2026-04-18)
+
+### New Features
+- **`/shipit-parallel`:** Parallel workstream builder. Takes GitHub issues or a milestone, analyses file dependencies to group into non-conflicting workstreams, spawns isolated engineer agents per workstream (worktree isolation), merges sequentially with integration testing, and opens a single PR when all tests pass.
+- `--dry-run` mode shows proposed workstream splits without executing builds
+- `--max-agents=N` flag to control parallelism (default 3, max 5)
+- Conflict/failure resolution with fix agents (max 2 cycles per workstream)
+
+### Files Added
+- `commands/shipit-parallel.md` — full skill definition with v3 template
+- `~/.claude/commands/shipit-parallel.md` — command entry point
+
 ## v3.0.0 (2026-04-04)
 
 ### Breaking Changes

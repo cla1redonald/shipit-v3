@@ -56,7 +56,7 @@ try {
 const cmdsDir = path.join(SHIPIT_DIR, 'commands');
 try {
   const cmds = fs.readdirSync(cmdsDir).filter(f => f.endsWith('.md'));
-  if (cmds.length < 8) issues.push(`only ${cmds.length}/9 commands`);
+  if (cmds.length < 10) issues.push(`only ${cmds.length}/10 commands`);
 } catch {
   issues.push('commands dir missing');
 }

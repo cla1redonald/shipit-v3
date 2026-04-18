@@ -39,6 +39,7 @@ Each skill works standalone. They chain via the file system — upstream outputs
 | `/prd-threads` | None | Convert PRD to executable threads |
 | `/orchestrate` | 6-10 agents (mixed) | Full product build |
 | `/shipit` | 3 agents (@retro opus, @docs + @reviewer sonnet) | Enforced commit workflow |
+| `/shipit-parallel` | 1 opus + N sonnet (workstreams + integration) | Batch-build GitHub issues in parallel |
 
 ## Lightweight Alternatives
 
@@ -49,3 +50,4 @@ Each skill works standalone. They chain via the file system — upstream outputs
 | Bug fix | `/build-feature` | `@engineer` directly |
 | Quick review | `/code-review` | `@reviewer` directly |
 | Ship it | `/shipit` (full gates) | Git commit + push manually |
+| Batch issues | `/shipit-parallel` (N agents) | `/build-feature` sequentially |

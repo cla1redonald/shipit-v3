@@ -21,13 +21,13 @@ FAILURES=()
 
 pass() {
   PASS=$((PASS + 1))
-  [[ $QUIET -eq 0 ]] && printf "  PASS: %s\n" "$1"
+  [[ $QUIET -eq 0 ]] && printf "  PASS: %s\n" "$1" || true
 }
 
 fail() {
   FAIL=$((FAIL + 1))
   FAILURES+=("$1: $2")
-  [[ $QUIET -eq 0 ]] && printf "  FAIL: %s\n    --> %s\n" "$1" "$2"
+  [[ $QUIET -eq 0 ]] && printf "  FAIL: %s\n    --> %s\n" "$1" "$2" || true
 }
 
 # Extract YAML frontmatter field value (simple key: value, handles quoted/unquoted)
