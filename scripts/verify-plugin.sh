@@ -4,7 +4,7 @@ set -euo pipefail
 # ShipIt Plugin Health Check
 # Run after Claude Code updates or when things feel broken.
 
-SHIPIT_DIR="${HOME}/shipit-v3"
+SHIPIT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PLUGIN_LINK="${HOME}/.claude/local-plugins/shipit"
 GLOBAL_AGENTS="${HOME}/.claude/agents"
 GLOBAL_SKILLS="${HOME}/.claude/skills"
@@ -90,7 +90,7 @@ hook_fail=0
 hook_count=0
 settings="$SHIPIT_DIR/.claude/settings.json"
 if [ -f "$settings" ]; then
-  hook_scripts=$(jq -r '.. | .command? // empty' "$settings" 2>/dev/null | grep -oE '\$\{CLAUDE_PLUGIN_ROOT\}/[^ "]+|~/shipit-v3/[^ "]+' | sort -u)
+  hook_scripts=$(jq -r '.. | .command? // empty' "$settings" 2>/dev/null | grep -oE '\$\{CLAUDE_PLUGIN_ROOT\}/[^ "]+|~/shipit-v2/[^ "]+' | sort -u)
   while IFS= read -r script; do
     [ -z "$script" ] && continue
     resolved=$(echo "$script" | sed "s|\${CLAUDE_PLUGIN_ROOT}|$SHIPIT_DIR|g" | sed "s|~/shipit-v3|$SHIPIT_DIR|g")

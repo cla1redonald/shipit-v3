@@ -4,7 +4,7 @@ set -euo pipefail
 # Sync ShipIt agents and skills to global fallback locations.
 # Run after editing any agent or command definition.
 
-SHIPIT_DIR="${HOME}/shipit-v3"
+SHIPIT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 GLOBAL_AGENTS="${HOME}/.claude/agents"
 GLOBAL_SKILLS="${HOME}/.claude/skills"
 
